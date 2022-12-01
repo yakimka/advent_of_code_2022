@@ -10,14 +10,33 @@ INPUT_TXT = os.path.join(os.path.dirname(__file__), 'input.txt')
 
 
 def compute(s: str) -> int:
+    calories = []
+    current_calories = 0
     for num in parse_numbers_split_new_line(s):
-        pass
-    return 0
+        if num is None:
+            calories.append(current_calories)
+            current_calories = 0
+            continue
+        current_calories += num
+    calories.append(current_calories)
+    calories.sort()
+    return sum(calories[-3:])  # 202346
 
 
 INPUT_S = '''\
+1000
+2000
+
+3000
+4000
+
+700
+
+6000
+7000
+8000
 '''
-EXPECTED = 0
+EXPECTED = 31000
 
 
 @pytest.mark.parametrize(
