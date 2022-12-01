@@ -10,30 +10,12 @@ INPUT_TXT = os.path.join(os.path.dirname(__file__), 'input.txt')
 
 
 def compute(s: str) -> int:
-    max_calories = 0
-    current_calories = 0
     for num in parse_numbers_split_new_line(s):
-        if num is None:
-            max_calories = max(max_calories, current_calories)
-            current_calories = 0
-            continue
-        current_calories += num
-    max_calories = max(max_calories, current_calories)
-    return max_calories  # 69501
+        pass
+    return 0
 
 
 INPUT_S = '''\
-1000
-2000
-
-3000
-4000
-
-5000
-
-6000
-7000
-8000
 '''
 EXPECTED = 21000
 
