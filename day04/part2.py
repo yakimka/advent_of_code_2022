@@ -20,8 +20,8 @@ class Section:
     def __contains__(self, other: Section):
         return self.start <= other.start <= other.end <= self.end
 
-    def is_the_same(self, other: Section):
-        return self in other or other in self
+    def has_intersections(self, other: Section):
+        return self.end >= other.start and self.start <= other.end
 
 
 def compute(s: str) -> int:
@@ -30,7 +30,7 @@ def compute(s: str) -> int:
         input1, input2 = line.split(",")
         section1 = Section.from_string(input1)
         section2 = Section.from_string(input2)
-        if section1.is_the_same(section2):
+        if section1.has_intersections(section2):
             total += 1
 
     return total
@@ -44,7 +44,7 @@ INPUT_S = '''\
 6-6,4-6
 2-6,4-8
 '''
-EXPECTED = 2
+EXPECTED = 4
 
 
 @pytest.mark.parametrize(
