@@ -7,6 +7,8 @@ import pytest
 
 INPUT_TXT = os.path.join(os.path.dirname(__file__), 'input.txt')
 MAX_SIZE = 100_000
+TOTAL_SPACE = 70_000_000
+NEED_UNUSED = 30_000_000
 
 
 class File:
@@ -62,16 +64,24 @@ def compute(s: str) -> int:
         if line == "$ ls":
             in_ls = True
 
-    total = 0
+    def size(dir: str):
+        dir_size = 0
+        for path, files in nav.dirs.items():
+            if path.startswith(dir):
+                dir_size += sum(file.size for file in files)
+        return dir_size
+
+    used_space = size("/")
+    min_to_delete = float("inf")
     for dir in dirs:
         dir_size = 0
         for path, files in nav.dirs.items():
             if path.startswith(dir):
                 dir_size += sum(file.size for file in files)
-        if dir_size < MAX_SIZE:
-            total += dir_size
+        if dir_size >= NEED_UNUSED - (TOTAL_SPACE - used_space):
+            min_to_delete = min(dir_size, min_to_delete)
 
-    return total
+    return min_to_delete
 
 
 INPUT_S = '''\
@@ -99,7 +109,7 @@ $ ls
 5626152 d.ext
 7214296 k
 '''
-EXPECTED = 95437
+EXPECTED = 24933642
 
 
 @pytest.mark.parametrize(
