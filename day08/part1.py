@@ -13,7 +13,7 @@ def compute(s: str) -> int:
     for line in s.splitlines():
         matrix.append([int(c) for c in line.strip()])
 
-    def compute_visible_in_rows_to_left(rows: Iterable[Iterable[int]]) -> list[list[int]]:
+    def compute_visible_in_rows_to_left(rows: Iterable[Iterable[int]]) -> list[list[bool]]:
         result = []
         for row in rows:
             max_val = -1
