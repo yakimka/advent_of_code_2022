@@ -31,14 +31,20 @@ def cpu(instructions):
         x += val
 
 
-def compute(s: str) -> int:
-    answer = 0
-    signal_cycles = list(range(20, 221, 40))
-    for i, x in enumerate(cpu(read_instructions(s)), start=1):
-        if i in signal_cycles:
-            answer += i * x
+def screen():
+    for row_n in range(6):
+        for i in range(40):
+            yield row_n, i
 
-    return answer  # 14920
+
+def compute(s: str) -> str:
+    surface = [[] for _ in range(6)]
+    for (crt_row, crt_i), x in zip(screen(), cpu(read_instructions(s))):
+        sprite_positions = [x - 1, x, x + 1]
+        draw_symbol = "#" if crt_i in sprite_positions else "."
+        surface[crt_row].append(draw_symbol)
+
+    return "\n".join(["".join(row) for row in surface])  # BUCACBUZ
 
 
 INPUT_S = '''\
@@ -189,7 +195,14 @@ noop
 noop
 noop
 '''
-EXPECTED = 13140
+EXPECTED = """\
+##..##..##..##..##..##..##..##..##..##..
+###...###...###...###...###...###...###.
+####....####....####....####....####....
+#####.....#####.....#####.....#####.....
+######......######......######......####
+#######.......#######.......#######.....\
+"""
 
 
 @pytest.mark.parametrize(
