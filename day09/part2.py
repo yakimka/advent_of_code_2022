@@ -31,8 +31,8 @@ dmap = {
 
 
 def compute(s: str) -> int:
-    head = tail = Vector2(0, 0)
-    seen = {tail}
+    knots = [Vector2(0, 0) for _ in range(10)]
+    seen = {knots[-1]}
 
     for line in s.splitlines():
         dtype, steps = line.split()
@@ -40,25 +40,36 @@ def compute(s: str) -> int:
         n = int(steps)
 
         for _ in range(n):
-            head += move.value
-            if abs(head.x - tail.x) >= 2 or abs(head.y - tail.y) >= 2:
-                tail = head + move.opposite.value
-                seen.add(tail)
+            knots[0] += move.value
+
+            prev = knots[0]
+            for i in range(1, len(knots)):
+                curr = knots[i]
+                diff_abs = abs(prev - curr)
+                sum_floordived = (prev + curr) // 2
+                if diff_abs == (2, 2):
+                    knots[i] = sum_floordived
+                elif diff_abs.x == 2:
+                    knots[i] = Vector2(sum_floordived.x, prev.y)
+                elif diff_abs.y == 2:
+                    knots[i] = Vector2(prev.x, sum_floordived.y)
+                prev = knots[i]
+            seen.add(knots[-1])
 
     return len(seen)
 
 
 INPUT_S = '''\
-R 4
-U 4
-L 3
-D 1
-R 4
-D 1
-L 5
-R 2
+R 5
+U 8
+L 8
+D 3
+R 17
+D 10
+L 25
+U 20
 '''
-EXPECTED = 13
+EXPECTED = 36
 
 
 @pytest.mark.parametrize(
