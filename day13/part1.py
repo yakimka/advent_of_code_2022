@@ -1,15 +1,44 @@
 from __future__ import annotations
 
 import os
+from itertools import zip_longest
 
 import pytest
 
 INPUT_TXT = os.path.join(os.path.dirname(__file__), 'input.txt')
 
 
+def to_list(val: int | list):
+    if isinstance(val, int):
+        return [val]
+    return val
+
+
 def compute(s: str) -> int:
-    for line in s.splitlines():
-        pass
+    right_orders = []
+    for i, line in enumerate(s.split("\n\n"), start=1):
+        l_str, r_str = line.strip().split("\n")
+        if compare(eval(l_str), eval(r_str)) <= 0:
+            right_orders.append(i)
+
+    return sum(right_orders)
+
+
+def compare(left: list, right: list) -> int:
+    for l, r in zip_longest(left, right, fillvalue=None):
+        if l is None:
+            return -1
+        elif r is None:
+            return 1
+
+        if any(isinstance(x, list) for x in (l, r)):
+            res = compare(to_list(l), to_list(r))
+            if res != 0:
+                return res
+        else:
+            res = l - r
+            if res != 0:
+                return res
 
     return 0
 
@@ -45,7 +74,7 @@ EXPECTED = 13
 @pytest.mark.parametrize(
     ('input_s', 'expected'),
     (
-        (INPUT_S, EXPECTED),
+            (INPUT_S, EXPECTED),
     ),
 )
 def test(input_s: str, expected: int) -> None:
